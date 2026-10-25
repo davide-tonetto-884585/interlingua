@@ -1,0 +1,3 @@
+Mein Plugin grüßt dich mit Namen und zählt die Bücher, die du seit dem Start von PaperPaw geöffnet hast.
+
+Öffne es im Werkzeugmenü. Deinen Namen stellst du in den Einstellungen ein, unter Dein Name.

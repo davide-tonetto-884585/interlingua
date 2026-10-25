@@ -1,0 +1,43 @@
+# The crate that makes the plugin file (`code.ppn`): one line of code,
+# `plugin!` around the plugin. The plugin itself lives in crates/my-plugin,
+# a crate of its own that is tested on the computer and tried in the
+# emulator. This is the layout of PaperPaw's samples/hello-native.
+[package]
+name = "my-plugin-native"
+description = "My PaperPaw plugin as a native plugin file for the Xteink X4 and X4 Pro"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+publish = false
+
+# A workspace of its own, as a plugin's own repository is: the file it
+# makes must fit firmware built elsewhere.
+[workspace]
+members = ["crates/my-plugin"]
+
+[[bin]]
+name = "my-plugin"
+path = "src/main.rs"
+test = false
+bench = false
+
+[dependencies]
+# The release of PaperPaw the plugin is built for. Move this, the patch
+# below, `paperpaw-dev` in crates/my-plugin/Cargo.toml, rust-toolchain.toml
+# and the CI's `PAPERPAW` together when you move to a new release.
+paperpaw-sdk = "0.5.0-beta.6"
+my-plugin = { path = "crates/my-plugin" }
+
+# One SDK for the plugin and for paperpaw-dev's app: see
+# tools/dev/templates/README.md in PaperPaw's repository.
+[patch.crates-io]
+paperpaw-sdk = { git = "https://github.com/hthoene/paperpaw", tag = "v0.5.0-beta.6" }
+
+# As the firmware is built: small code, one unit, no unwinding.
+[profile.release]
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+# Lines in the ELF, for naming the functions of a crash's calls.
+debug = "line-tables-only"

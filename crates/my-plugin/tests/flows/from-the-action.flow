@@ -1,0 +1,8 @@
+# The action the way a user runs it (a menu entry or a button runs the
+# same action), and the screen closed with the confirm button.
+
+run:my-plugin.open
+expect screen my-plugin.screen
+confirm
+expect stack 1
+expect no warnings
