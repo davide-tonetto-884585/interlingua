@@ -60,24 +60,6 @@ cargo +esp x4pro          # X4 Pro: `esp` toolchain (espup) and the release's co
 The reader needs PaperPaw **0.5.0-beta.9**: a plugin for interface 4 does not run on older
 firmware. Full instructions: `samples/hello-native/README.md` in PaperPaw's repository.
 
-## Publishing from GitHub
-
-1. Make the key once: `paperpaw-sign key ~/.paperpaw/author.key`. Keep it outside the
-   repository, with a safe copy.
-2. Put its contents in the repository secret `PAPERPAW_PLUGIN_KEY`.
-3. Replace `YOUR-NAME` in `plugin/store/store.ini` and give the repository the topic
-   `paperpaw-plugin`.
-4. Raise `version` in `plugin/plugin.ini` and in the `Manifest` (`lib.rs`), commit
-   `Cargo.lock` too, then `git tag v0.1.0 && git push --tags`.
-
-The workflow checks everything with `paperpaw-sign check-publish` and publishes the release;
-paperpaw.org lists it as "Community, unreviewed". Alternatively, upload it by hand at
-<https://paperpaw.org/submit>. Full guide: <https://paperpaw.org/authors>.
-
-## Next steps
-
-1. Translate a chapter in the background (`paperpaw_sdk::work`).
-
 ## Licence
 
 Apache-2.0 (`LICENSE`); where the parts come from is in `NOTICE`.
