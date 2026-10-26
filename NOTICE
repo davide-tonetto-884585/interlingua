@@ -1,0 +1,20 @@
+Interlingua
+A PaperPaw plugin, licensed under the Apache License, Version 2.0 (LICENSE).
+
+Parts of it are taken from PaperPaw (https://github.com/hthoene/paperpaw),
+Copyright 2026 Hannes Thoene and the PaperPaw contributors, licensed under
+the Apache License, Version 2.0, and changed:
+
+- crates/interlingua/src/lib.rs and tests/interlingua.rs,
+  from samples/interlinear;
+- build.sh, paperpaw-plugin.x, .cargo/config.toml, rust-toolchain.toml and
+  src/main.rs, from samples/hello-native;
+- .github/workflows/, from tools/dev/templates.
+
+The idea of the sentence alignment in crates/interlingua/src/pairing.rs
+comes from CrossLingua Reader (https://github.com/ed-fruty/crosslingua-reader,
+MIT License); none of its code is here.
+
+crates/interlingua/tests/books/alice-in-wonderland.txt is a Project
+Gutenberg eBook, under the Project Gutenberg License at its end. It is used
+by the tests only and never goes onto a reader.

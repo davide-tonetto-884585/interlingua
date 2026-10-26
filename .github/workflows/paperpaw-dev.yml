@@ -16,7 +16,7 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   # The plugin's id, as its Manifest says.
-  PLUGIN: my-plugin
+  PLUGIN: interlingua
 
 jobs:
   check:
@@ -26,20 +26,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Tests and snapshots
-        run: cargo test
+      # The plugin is the crate crates/interlingua (-p): the repository's
+      # root crate only makes the file for the readers.
+      - name: Tests
+        run: cargo test -p interlingua
       - name: paperpaw-dev
         # Also when a test failed, for the whole report.
         if: ${{ !cancelled() }}
         # One variant a device (English, light, the default look); leave
         # out --quick for every language, dark and every look.
-        run: cargo run --example paperpaw-dev -- check --plugin "$PLUGIN" --quick
-      - name: Flows, varied at the edges
-        if: ${{ !cancelled() }}
-        # Every flow of tests/flows on every device, each step against the
-        # X4's budgets, then played again at the edges (Back, Home and sleep
-        # in the middle, the network failing, little storage, ...).
-        run: cargo run --example paperpaw-dev -- flows --plugin "$PLUGIN" --flow tests/flows --language en --light --out target/paperpaw-dev/flows
+        run: cargo run -p interlingua --example paperpaw-dev -- check --plugin "$PLUGIN" --quick
+      # Flows (tests/flows, see PaperPaw's docs/plugins.md, "Flows") come
+      # later: add this step back once the crate has some.
       - uses: actions/upload-artifact@v7
         # The report also when a check failed: that is when it is read.
         if: always()

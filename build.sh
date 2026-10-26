@@ -27,7 +27,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 # The binary crate that makes the file (`[[bin]]` in Cargo.toml).
-bin=${PLUGIN:-my-plugin}
+bin=${PLUGIN:-interlingua}
 
 key=()
 case "$#" in

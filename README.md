@@ -1,72 +1,81 @@
-# my-plugin
+# Interlingua
 
-Punto di partenza per un plugin con codice per [PaperPaw](https://paperpaw.org)
-(Xteink X4 e X4 Pro). Deriva da `samples/hello-native` e `samples/hello-plugin`
-del repository di PaperPaw (Apache-2.0), con la stessa struttura di un
-repository di plugin vero.
+Lettura bilingue per [PaperPaw](https://paperpaw.org) (Xteink X4 e X4 Pro): una piccola
+traduzione sopra ogni riga del libro, oppure un paragrafo tradotto dopo ogni paragrafo.
 
-**Prima di tutto**, in tutto il progetto, sostituisci:
+Si basa su `samples/interlinear` di PaperPaw, dalla release **0.5.0-beta.9** (interfaccia
+dei plugin 4), la prima con ciò che serve: spazio fra le righe chiesto da un filtro di testo
+(`Block::leading_above`), posizione delle parole per i layer (`PageView::words`), blocchi
+inseriti dai filtri (`Block::insert_after`) e tocchi sui layer (`PageLayerSpec::items`).
 
-| Cosa | Dove |
-|---|---|
-| `my-plugin` (id) | `plugin/plugin.ini`, `plugin/store/store.ini`, `Cargo.toml` (due), `src/main.rs`, `crates/my-plugin/**`, `build.sh`, i due workflow in `.github/` |
-| `my_plugin::MyPlugin` | `src/main.rs`, `crates/my-plugin/examples/`, `crates/my-plugin/tests/snapshots.rs` |
-| `YOUR-NAME` | `plugin/store/store.ini` (due volte) |
+**Stato:** traduce capitolo per capitolo ("Traduci capitolo corrente") con **Google** o
+**DeepL**, a scelta in *Impostazioni di lettura → Interlingua*. Ogni servizio vuole la
+chiave dell'utente (impostazione segreta, salvata fra "Password e chiavi"): nel codice non
+c'è nessuna chiave. Le traduzioni restano su scheda e il filtro le legge da lì.
 
-L'id deve essere in minuscolo, con cifre e trattini, al massimo 40 caratteri, e deve
-iniziare ogni id nel codice (`my-plugin.open`). La versione in `plugin/plugin.ini`
-e nel `Manifest` deve essere la stessa.
+Google usa l'endpoint non ufficiale di Chrome (`translate-pa.googleapis.com`), che Google può
+limitare o chiudere; DeepL è l'API ufficiale (le chiavi gratuite finiscono con `:fx`).
 
 ## Struttura
 
 | Percorso | Cos'è |
 |---|---|
-| `crates/my-plugin/src/lib.rs` | il plugin: azione, schermata, impostazione, evento |
-| `crates/my-plugin/src/logic.rs` | logica pura, senza schermo: si testa con `cargo test` |
-| `crates/my-plugin/i18n/`, `how/` | traduzioni e "come funziona" |
-| `crates/my-plugin/tests/` | test: snapshot e flussi per l'emulatore |
-| `src/main.rs` | il crate che produce il file nativo (`code.ppn`): una riga |
+| `crates/interlingua/src/lib.rs` | il plugin: impostazioni, filtro di testo, layer, tocchi |
+| `crates/interlingua/src/text.rs` | frasi e parole, logica pura con test |
+| `crates/interlingua/src/engine.rs` | sceglie il servizio e la sua chiave |
+| `crates/interlingua/src/google.rs`, `deepl.rs` | richiesta e risposta di ciascun servizio |
+| `crates/interlingua/src/pairing.rs` | **esercizio**: quale traduzione va con quale frase |
+| `crates/interlingua/tests/interlingua.rs` | il plugin sul reader di PaperPaw, come su un lettore |
+| `crates/interlingua/i18n/`, `how/` | traduzioni dell'interfaccia (en, de, it) e "come funziona" |
+| `src/main.rs` | il crate che produce il file per i lettori (`code.ppn`): una riga |
 | `plugin/` | la cartella che installano i lettori; `plugin/store/` è solo per lo store |
-| `build.sh`, `.cargo/`, `paperpaw-plugin.x`, `rust-toolchain.toml` | compilazione e firma, come nel sample |
-| `.github/workflows/` | CI: `build.yml` (release firmata su tag `v*`), `paperpaw-dev.yml` (controlli) |
+| `build.sh`, `.cargo/`, `paperpaw-plugin.x`, `rust-toolchain.toml` | compilazione e firma, dalla beta.9 |
+| `.github/workflows/paperpaw-dev.yml` | test e controlli a ogni push |
+| `.github/workflows/paperpaw-release.yml` | su un tag `v*`: compila, firma, controlla e crea la release |
 
-## Provarlo sul computer
+## Primo avvio
 
-Serve Rust (`rustup`), il resto lo scarica Cargo. La release di PaperPaw è
-`0.5.0-beta.6`: se ne esce una nuova, cambia insieme SDK, `patch`,
-`paperpaw-dev`, `rust-toolchain.toml` e `PAPERPAW` nel workflow.
+Serve Rust (`rustup`): il resto lo scarica Cargo, compreso PaperPaw dal suo repository.
 
 ```sh
-cargo test -p my-plugin                       # logica + snapshot (`-p`: dalla radice un semplice `cargo test` guarderebbe solo il crate nativo)
-PAPERPAW_BLESS=1 cargo test -p my-plugin --test snapshots   # la prima volta: crea le immagini; guardale prima del commit
-cargo run -p my-plugin --example paperpaw-dev -- check --plugin my-plugin --quick
-cargo run -p my-plugin --example paperpaw-dev -- flows --plugin my-plugin --flow crates/my-plugin/tests/flows
+cargo generate-lockfile          # la prima volta: poi committa Cargo.lock
+cargo test -p interlingua         # logica + plugin sul reader di PaperPaw
+cargo test -p interlingua -- --ignored   # i test dell'esercizio (falliscono finché non scrivi pair)
+cargo run -p interlingua --example paperpaw-dev -- check --plugin interlingua --quick
 ```
 
-Il rapporto è in `target/paperpaw-dev/report.html`. Dall'albero di PaperPaw la
-documentazione completa è `docs/plugins.md` (sezioni "Testing" e "Checking your plugin").
-
-I percorsi dei comandi `paperpaw-dev` sono relativi alla cartella del crate, quindi
-se un comando non trova `tests/snapshots` o `tests/flows`, lancialo da
-`crates/my-plugin`.
+Il rapporto dei controlli è in `target/paperpaw-dev/report.html`.
 
 ## Compilare per il lettore
 
 ```sh
 cargo x4                  # X4: riscv32imc-unknown-none-elf
-cargo +esp x4pro          # X4 Pro: serve la toolchain `esp` (espup) e le librerie core della release
+cargo +esp x4pro          # X4 Pro: toolchain `esp` (espup) e librerie core della release
+./build.sh --key ~/.paperpaw/author.key   # entrambi, firmati, in dist/ (Linux o macOS)
 ```
 
-Per le istruzioni complete (librerie core dell'X4 Pro, firma, installazione via USB)
-vedi `samples/hello-native/README.md` nel repository di PaperPaw.
+Il lettore deve avere PaperPaw **0.5.0-beta.9**: un plugin per l'interfaccia 4 non gira su
+firmware più vecchi. Istruzioni complete: `samples/hello-native/README.md` nel repository di
+PaperPaw.
 
-## Pubblicare
+## Pubblicare da GitHub
 
-1. Crea una chiave una volta: `paperpaw-sign key ~/.paperpaw/author.key`. Tienila fuori
-   dal repository, con una copia sicura.
-2. Metti il contenuto della chiave nel segreto `PAPERPAW_PLUGIN_KEY` del repository.
-3. Alza `version` in `plugin/plugin.ini` (e nel `Manifest`), committa anche `Cargo.lock`,
-   poi `git tag v0.1.0 && git push --tags`: la CI costruisce e firma i due file.
-4. Carica su <https://paperpaw.org/submit> lo ZIP `*-upload.zip` e i due `.ppn` firmati.
+1. Crea la chiave una volta: `paperpaw-sign key ~/.paperpaw/author.key`. Tienila fuori dal
+   repository, con una copia sicura.
+2. Mettine il contenuto nel segreto `PAPERPAW_PLUGIN_KEY` del repository.
+3. Sostituisci `YOUR-NAME` in `plugin/store/store.ini` e aggiungi al repository il topic
+   `paperpaw-plugin`.
+4. Alza `version` in `plugin/plugin.ini` e nel `Manifest` (`lib.rs`), committa anche
+   `Cargo.lock`, poi `git tag v0.1.0 && git push --tags`.
 
-La guida completa è <https://paperpaw.org/authors>.
+Il workflow controlla tutto con `paperpaw-sign check-publish` e pubblica la release;
+paperpaw.org la elenca come "Community, unreviewed". In alternativa si carica a mano su
+<https://paperpaw.org/submit>. Guida completa: <https://paperpaw.org/authors>.
+
+## Prossimi passi
+
+1. **Traduzione in background** di un capitolo (`paperpaw_sdk::work`).
+
+## Licenza
+
+Apache-2.0 (`LICENSE`); provenienza delle parti in `NOTICE`.

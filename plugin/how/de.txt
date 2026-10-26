@@ -1,3 +1,1 @@
-Mein Plugin grüßt dich mit Namen und zählt die Bücher, die du seit dem Start von PaperPaw geöffnet hast.
-
-Öffne es im Werkzeugmenü. Deinen Namen stellst du in den Einstellungen ein, unter Dein Name.
+Interlingua zeigt über jeder Zeile eines Buches eine kleine Übersetzung, die dort beginnt, wo jeder Satz der Zeile beginnt. Tippe auf die Übersetzung, oder wähle sie mit den Tasten wie einen Link und drücke Auswählen, um sie ganz zu öffnen; noch einmal, um sie zu schließen. Mit Übersetzung nach Absätzen folgt jedem Absatz stattdessen oder zusätzlich ein übersetzter Absatz. Beides steht in den Einstellungen unter Lesen. Vorerst ist die Übersetzung ein Spielzeug: ein paar englische Wörter auf Italienisch.

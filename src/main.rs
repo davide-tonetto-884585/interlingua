@@ -4,4 +4,4 @@
 #![no_std]
 #![no_main]
 
-paperpaw_sdk::plugin!(my_plugin::MyPlugin);
+paperpaw_sdk::plugin!(interlingua::Interlingua);
