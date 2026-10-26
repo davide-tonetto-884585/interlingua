@@ -357,7 +357,7 @@ pub struct Interlingua;
 impl Plugin for Interlingua {
     fn manifest(&self) -> Manifest {
         // The version is the one in plugin/plugin.ini: keep them equal.
-        Manifest::new(PLUGIN, "Interlingua", Version::new(0, 1, 0))
+        Manifest::new(PLUGIN, "Interlingua", Version::new(0, 1, 1))
             .description("A translation above each line, or after each paragraph.")
             .how(&HOW)
             .uses(paperpaw_sdk::Uses::NETWORK)

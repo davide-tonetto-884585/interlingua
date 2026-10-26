@@ -204,4 +204,9 @@ jobs:
         run: |
           set -euo pipefail
           ls -l release
-          gh release create "$GITHUB_REF_NAME" release/* --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+          # The notes are the version's section of CHANGELOG.md, or
+          # GitHub's own when there is none.
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '/^## /{on = ($2 == v); next} on' CHANGELOG.md > "$RUNNER_TEMP/notes.md" 2>/dev/null || true
+          if [ -s "$RUNNER_TEMP/notes.md" ]; then notes=(--notes-file "$RUNNER_TEMP/notes.md"); else notes=(--generate-notes); fi
+          gh release create "$GITHUB_REF_NAME" release/* --title "$GITHUB_REF_NAME" "${notes[@]}" --verify-tag
