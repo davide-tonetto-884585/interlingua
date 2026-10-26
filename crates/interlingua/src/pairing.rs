@@ -2,11 +2,9 @@
 //! sentences: the alignment an interlinear reading needs, so that each
 //! sentence's translation starts above the sentence.
 //!
-//! **An exercise.** [`pair`] is to be written: its tests below say what it
-//! must do and are `#[ignore]`d until it does (`cargo test -p interlingua
-//! -- --ignored` runs them). The rule is the one CrossLingua Reader uses
-//! (MIT, `src/modules/lingua/utils/SentencePairing.h`), from its idea
-//! only: no code of it is here.
+//! [`pair`] applies the rule CrossLingua Reader uses (MIT,
+//! `src/modules/lingua/utils/SentencePairing.h`), from its idea only: no
+//! code of it is here. The tests below say what it must do.
 //!
 //! The rule, in characters (bytes are fine for a first version):
 //!
